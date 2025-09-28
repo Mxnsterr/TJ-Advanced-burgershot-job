@@ -7,11 +7,11 @@ PlayerData = {}
 
 local isMenuOpen = false
 
-local function toggleMenu()
+local function toggleMenu(forceButtons)
     local items = {}
 
-    if Config.Resotrani[1].menu[2].Items then
-        for _, item in ipairs(Config.Resotrani[1].menu[2].Items) do
+    if Config.Restaurants[1].menu[2].Items then
+        for _, item in ipairs(Config.Restaurants[1].menu[2].Items) do
             table.insert(items, {
                 label = item.label,
                 item = item.item,
@@ -22,8 +22,8 @@ local function toggleMenu()
         end
     end
 
-    if Config.Resotrani[1].menu[4].Items then
-        for _, item in ipairs(Config.Resotrani[1].menu[5].Items) do
+    if Config.Restaurants[1].menu[4].Items then
+        for _, item in ipairs(Config.Restaurants[1].menu[5].Items) do
             table.insert(items, {
                 label = item.label,
                 item = item.item,
@@ -34,8 +34,8 @@ local function toggleMenu()
         end
     end
 
-    if Config.Resotrani[1].menu[4].Items then
-        for _, item in ipairs(Config.Resotrani[1].menu[1].Items) do
+    if Config.Restaurants[1].menu[4].Items then
+        for _, item in ipairs(Config.Restaurants[1].menu[1].Items) do
             table.insert(items, {
                 label = item.label,
                 item = item.item,
@@ -49,10 +49,19 @@ local function toggleMenu()
     if not isMenuOpen then
         SetNuiFocus(true, true)
         Wait(0)
-        SendNUIMessage({
-            type = "openMenu",
-            items = items
-        })
+        if forceButtons then
+            SendNUIMessage({
+                type = "openMenu",
+                items = items,
+                allowSelfOrder = forceButtons
+            })
+        else
+            SendNUIMessage({
+                type = "openMenu",
+                items = items,
+                allowSelfOrder = Config.AllowSelfOrder
+            })
+        end
         isMenuOpen = true
     elseif isMenuOpen then
         SetNuiFocus(false, false)
@@ -73,7 +82,7 @@ RegisterNUICallback("addToCart", function(data)
 end)
 
 RegisterNUICallback('createOrder', function(data, cb)
-    TriggerServerEvent('tj_restaurants:createOrder', data.items, data.paymentMethod)
+    TriggerServerEvent('tj_burgershot:createOrder', data.items, data.paymentMethod, data.targetId)
     cb('ok')
 end)
 
@@ -84,7 +93,7 @@ CreateThread(function()
             exports.ox_target:addBoxZone({
                 name = v.name,
                 coords = vec3(v.target.coords.x, v.target.coords.y, v.target.coords.z),
-                size = vec3(v.target.width, v.target.lenght, v.target.maxZ - v.target.minZ),
+                size = vec3(v.target.width, v.target.length, v.target.maxZ - v.target.minZ),
                 rotation = v.target.heading + 90,
                 debug = false,
                 options = {
@@ -101,7 +110,7 @@ CreateThread(function()
                 distance = 5.0
             })
         elseif Config.Target == 'qb' then
-            exports['qb-target']:AddBoxZone(v.name, v.target.coords, v.target.width, v.target.lenght, {
+            exports['qb-target']:AddBoxZone(v.name, v.target.coords, v.target.width, v.target.length, {
                 name = v.name,
                 heading = v.target.heading,
                 debugPoly = false,
@@ -124,14 +133,14 @@ CreateThread(function()
         end
     end
 
-    for i = 1, #Config.Resotrani, 1 do
-        for j = 1, #Config.Resotrani[i].stashovi, 1 do
-            local v = Config.Resotrani[i].stashovi[j]
+    for i = 1, #Config.Restaurants, 1 do
+        for j = 1, #Config.Restaurants[i].stashovi, 1 do
+            local v = Config.Restaurants[i].stashovi[j]
             if Config.Target == 'ox' then
                 exports.ox_target:addBoxZone({
                     name = v.name,
                     coords = vec3(v.target.coords.x, v.target.coords.y, v.target.coords.z),
-                    size = vec3(v.target.width, v.target.lenght, v.target.maxZ - v.target.minZ),
+                    size = vec3(v.target.width, v.target.length, v.target.maxZ - v.target.minZ),
                     rotation = v.target.heading + 90,
                     debug = false,
                     options = {
@@ -144,7 +153,7 @@ CreateThread(function()
                     distance = 3.0,
                 })
             elseif Config.Target == 'qb' then
-                exports['qb-target']:AddBoxZone(v.name, v.target.coords, v.target.width, v.target.lenght, {
+                exports['qb-target']:AddBoxZone(v.name, v.target.coords, v.target.width, v.target.length, {
                     name = v.name,
                     heading = v.target.heading,
                     debugPoly = false,
@@ -155,7 +164,7 @@ CreateThread(function()
                         {
                             icon = v.target.icon,
                             label = v.target.label,
-                            job = Config.Resotrani[i].job,
+                            job = Config.Restaurants[i].job,
                             action = v.target.action,
                             canInteract = function()
                                 return onDuty and washedHands
@@ -167,20 +176,20 @@ CreateThread(function()
             end
         end
 
-        for j = 1, #Config.Resotrani[i].menu, 1 do
-            local v = Config.Resotrani[i].menu[j]
+        for j = 1, #Config.Restaurants[i].menu, 1 do
+            local v = Config.Restaurants[i].menu[j]
             if Config.Target == 'ox' then
                 exports.ox_target:addBoxZone({
                     name = v.menuName,
                     coords = vec3(v.target.coords.x, v.target.coords.y, v.target.coords.z),
-                    size = vec3(v.target.width, v.target.lenght, v.target.maxZ - v.target.minZ),
+                    size = vec3(v.target.width, v.target.length, v.target.maxZ - v.target.minZ),
                     rotation = v.target.heading + 90,
                     debug = false,
                     options = {
                         {
                             icon = v.target.icon,
                             label = v.target.label,
-                            groups = Config.Resotrani[i].job,
+                            groups = Config.Restaurants[i].job,
                             onSelect = v.target.action,
                             canInteract = function()
                                 return onDuty and washedHands
@@ -190,7 +199,7 @@ CreateThread(function()
                     distance = 3.0,
                 })
             elseif Config.Target == 'qb' then
-                exports['qb-target']:AddBoxZone(v.menuName, v.target.coords, v.target.width, v.target.lenght, {
+                exports['qb-target']:AddBoxZone(v.menuName, v.target.coords, v.target.width, v.target.length, {
                     name = v.menuName,
                     heading = v.target.heading,
                     debugPoly = false,
@@ -201,7 +210,7 @@ CreateThread(function()
                         {
                             icon = v.target.icon,
                             label = v.target.label,
-                            job = Config.Resotrani[i].job,
+                            job = Config.Restaurants[i].job,
                             action = v.target.action,
                             canInteract = function()
                                 return onDuty and washedHands
@@ -215,16 +224,17 @@ CreateThread(function()
     end
 end)
 
-function NapraviMenije()
-    for i = 1, #Config.Resotrani, 1 do
-        for j = 1, #Config.Resotrani[i].menu, 1 do
-            local v = Config.Resotrani[i].menu[j]
+function CreateMenus()
+    for i = 1, #Config.Restaurants, 1 do
+        for j = 1, #Config.Restaurants[i].menu, 1 do
+            local v = Config.Restaurants[i].menu[j]
             if v.id == 'drinks' then
                 Items = {}
                 for z = 1, #v.Items, 1 do
                     Items[#Items + 1] = {
                         title = v.Items[z].label,
-                        event = 'tj_restaurants:MakeDrink',
+                        icon = Config.ImagesBasePath..''..v.Items[z].item..'.png',
+                        event = 'tj_burgershot:MakeDrink',
                         args = {
                             item = v.Items[z].item
                         }
@@ -239,7 +249,7 @@ function NapraviMenije()
                 Items = {}
                 for z = 1, #v.Items, 1 do
                     description[z] = ''
-                    local bool = lib.callback.await('tj_restaurants:checkItems', false, v.Items[z].recipe)
+                    local bool = lib.callback.await('tj_burgershot:checkItems', false, v.Items[z].recipe)
 
                     for o = 1, #v.Items[z].recipe, 1 do
                         description[z] = description[z] .. '\n' .. v.Items[z].recipe[o].label .. ' x' .. v.Items[z].recipe[o].amount
@@ -247,8 +257,9 @@ function NapraviMenije()
                     Items[#Items + 1] = {
                         title = v.Items[z].label,
                         description = description[z],
+                        icon = Config.ImagesBasePath..''..v.Items[z].item..'.png',
                         disabled = bool,
-                        event = 'tj_restaurants:MakeFood',
+                        event = 'tj_burgershot:MakeFood',
                         args = {
                             item = v.Items[z].item,
                             recipe = v.Items[z].recipe
@@ -265,7 +276,7 @@ function NapraviMenije()
                 Items = {}
                 for z = 1, #v.Items, 1 do
                     description[z] = ''
-                    local bool = lib.callback.await('tj_restaurants:checkItems', false, v.Items[z].recipe)
+                    local bool = lib.callback.await('tj_burgershot:checkItems', false, v.Items[z].recipe)
 
                     for o = 1, #v.Items[z].recipe, 1 do
                         description[z] = description[z] .. '\n' .. v.Items[z].recipe[o].label .. ' x' .. v.Items[z].recipe[o].amount
@@ -273,8 +284,9 @@ function NapraviMenije()
                     Items[#Items + 1] = {
                         title = v.Items[z].label,
                         description = description[z],
+                        icon = Config.ImagesBasePath..''..v.Items[z].item..'.png',
                         disabled = bool,
-                        event = 'tj_restaurants:makeBBQ',
+                        event = 'tj_burgershot:makeBBQ',
                         args = {
                             item = v.Items[z].item,
                             recipe = v.Items[z].recipe
@@ -291,7 +303,7 @@ function NapraviMenije()
                 Items = {}
                 for z = 1, #v.Items, 1 do
                     description[z] = ''
-                    local bool = lib.callback.await('tj_restaurants:checkItems', false, v.Items[z].recipe)
+                    local bool = lib.callback.await('tj_burgershot:checkItems', false, v.Items[z].recipe)
 
                     for o = 1, #v.Items[z].recipe, 1 do
                         description[z] = description[z] .. '\n' .. v.Items[z].recipe[o].label .. ' x' .. v.Items[z].recipe[o].amount
@@ -299,8 +311,9 @@ function NapraviMenije()
                     Items[#Items + 1] = {
                         title = v.Items[z].label,
                         description = description[z],
+                        icon = Config.ImagesBasePath..''..v.Items[z].item..'.png',
                         disabled = bool,
-                        event = 'tj_restaurants:deepFryer',
+                        event = 'tj_burgershot:deepFryer',
                         args = {
                             item = v.Items[z].item,
                             recipe = v.Items[z].recipe
@@ -317,7 +330,7 @@ function NapraviMenije()
                 Items = {}
                 for z = 1, #v.Items, 1 do
                     description[z] = ''
-                    local bool = lib.callback.await('tj_restaurants:checkItems', false, v.Items[z].recipe)
+                    local bool = lib.callback.await('tj_burgershot:checkItems', false, v.Items[z].recipe)
 
                     for o = 1, #v.Items[z].recipe, 1 do
                         description[z] = description[z] .. '\n' .. v.Items[z].recipe[o].label .. ' x' .. v.Items[z].recipe[o].amount
@@ -325,8 +338,9 @@ function NapraviMenije()
                     Items[#Items + 1] = {
                         title = v.Items[z].label,
                         description = description[z],
+                        icon = Config.ImagesBasePath..''..v.Items[z].item..'.png',
                         disabled = bool,
-                        event = 'tj_restaurants:Cutting',
+                        event = 'tj_burgershot:Cutting',
                         args = {
                             item = v.Items[z].item,
                             recipe = v.Items[z].recipe
@@ -344,7 +358,7 @@ function NapraviMenije()
     end
 end
 
-AddEventHandler('tj_restaurants:MakeDrink', function(data)
+AddEventHandler('tj_burgershot:MakeDrink', function(data)
     if not onDuty then
         lib.notify({
             title = locale('notify_title'),
@@ -395,12 +409,12 @@ AddEventHandler('tj_restaurants:MakeDrink', function(data)
         },
     }) then
         ClearPedTasks(PlayerPedId())
-        lib.callback.await('tj_restaurants:giveItem', function() end, data)
+        lib.callback.await('tj_burgershot:giveItem', function() end, data)
     end
 end)
 
 
-AddEventHandler('tj_restaurants:MakeFood', function(data)
+AddEventHandler('tj_burgershot:MakeFood', function(data)
     if not onDuty then
         lib.notify({
             title = locale('notify_title'),
@@ -448,11 +462,11 @@ AddEventHandler('tj_restaurants:MakeFood', function(data)
         },
     }) then
         ClearPedTasks(PlayerPedId())
-        lib.callback.await('tj_restaurants:giveItem', function() end, data)
+        lib.callback.await('tj_burgershot:giveItem', function() end, data)
     end
 end)
 
-AddEventHandler('tj_restaurants:makeBBQ', function(data)
+AddEventHandler('tj_burgershot:makeBBQ', function(data)
     if not onDuty then
         lib.notify({
             title = locale('notify_title'),
@@ -483,11 +497,11 @@ AddEventHandler('tj_restaurants:makeBBQ', function(data)
             clip = 'base'
         },
     }) then
-        lib.callback.await('tj_restaurants:giveItem', function() end, data)
+        lib.callback.await('tj_burgershot:giveItem', function() end, data)
     end
 end)
 
-AddEventHandler('tj_restaurants:deepFryer', function(data)
+AddEventHandler('tj_burgershot:deepFryer', function(data)
     if not onDuty then
         lib.notify({
             title = locale('notify_title'),
@@ -518,11 +532,11 @@ AddEventHandler('tj_restaurants:deepFryer', function(data)
             clip = 'idle'
         },
     }) then
-        lib.callback.await('tj_restaurants:giveItem', function() end, data)
+        lib.callback.await('tj_burgershot:giveItem', function() end, data)
     end
 end)
 
-AddEventHandler('tj_restaurants:Cutting', function(data)
+AddEventHandler('tj_burgershot:Cutting', function(data)
     if not onDuty then
         lib.notify({
             title = locale('notify_title'),
@@ -570,7 +584,7 @@ AddEventHandler('tj_restaurants:Cutting', function(data)
         },
     }) then
         ClearPedTasks(PlayerPedId())
-        lib.callback.await('tj_restaurants:giveItem', function() end, data)
+        lib.callback.await('tj_burgershot:giveItem', function() end, data)
     end
 end)
 
@@ -715,7 +729,7 @@ local function OpenOrderMenu()
         })
         return
     end
-    TriggerServerEvent('tj_restaurants:getOrders')
+    TriggerServerEvent('tj_burgershot:getOrders')
 end
 
 local function ShowOrderDetails(order)
@@ -736,14 +750,16 @@ local function ShowOrderDetails(order)
         title = locale('accept_order'),
         icon = 'fas fa-check',
         onSelect = function()
-            TriggerServerEvent('tj_restaurants:acceptOrder', order.id)
+            TriggerServerEvent('tj_burgershot:acceptOrder', order.id)
         end
     })
 
     table.insert(options, {
-        title = locale('close'),
-        icon = 'fas fa-times',
-        onSelect = function() end
+        title = locale('back'),
+        icon = 'fas fa-chevron-left',
+        onSelect = function()
+            OpenOrderMenu()
+        end
     })
 
     lib.registerContext({
@@ -754,8 +770,8 @@ local function ShowOrderDetails(order)
     lib.showContext('order_details')
 end
 
-RegisterNetEvent('tj_restaurants:receiveOrders')
-AddEventHandler('tj_restaurants:receiveOrders', function(activeOrders)
+RegisterNetEvent('tj_burgershot:receiveOrders')
+AddEventHandler('tj_burgershot:receiveOrders', function(activeOrders)
     local options = {}
     for _, order in ipairs(activeOrders) do
         table.insert(options, {
@@ -776,8 +792,8 @@ AddEventHandler('tj_restaurants:receiveOrders', function(activeOrders)
 end)
 
 
-RegisterNetEvent('tj_restaurants:orderCreated')
-AddEventHandler('tj_restaurants:orderCreated', function(orderId)
+RegisterNetEvent('tj_burgershot:orderCreated')
+AddEventHandler('tj_burgershot:orderCreated', function(orderId)
     SendNUIMessage({
         type = "showNotification",
         message = locale('order_number'):format(orderId),
@@ -785,8 +801,8 @@ AddEventHandler('tj_restaurants:orderCreated', function(orderId)
     })
 end)
 
-RegisterNetEvent('tj_restaurants:orderAccepted')
-AddEventHandler('tj_restaurants:orderAccepted', function(orderId)
+RegisterNetEvent('tj_burgershot:orderAccepted')
+AddEventHandler('tj_burgershot:orderAccepted', function(orderId)
     lib.notify({
         title = locale('order_accepted'),
         description = locale('order_accepted_desc'):format(orderId),
@@ -795,7 +811,7 @@ AddEventHandler('tj_restaurants:orderAccepted', function(orderId)
 end)
 
 CreateThread(function()
-    for _, orderloc in ipairs(Config.OrdersLoc) do
+    for id, orderloc in pairs(Config.OrdersLoc) do
         local targetOptions = {}
         if Config.Target == 'ox' then
             exports.ox_target:addBoxZone({
@@ -813,8 +829,8 @@ CreateThread(function()
                 }
             })
         elseif Config.Target == 'qb' then
-            exports['qb-target']:AddBoxZone('order_location', orderloc.coords, orderloc.size.x, orderloc.size.y, {
-                name = 'order_location',
+            exports['qb-target']:AddBoxZone('order_location'..id, orderloc.coords, orderloc.size.x, orderloc.size.y, {
+                name = 'order_location'..id,
                 heading = orderloc.rotation,
                 debugPoly = false,
                 minZ = orderloc.coords.z - (orderloc.size.z / 2),
@@ -822,11 +838,20 @@ CreateThread(function()
             }, {
                 options = {
                     {
-                        name = 'open_order_menu',
+                        name = 'open_order_menu'..id,
                         icon = 'fas fa-clipboard-list',
                         label = locale('orders_menu'),
                         action = OpenOrderMenu,
                         job = orderloc.job,
+                    },
+                    {
+                        name = 'ordera'..id,
+                        icon = 'fas fa-clipboard-list',
+                        label = locale('ordering_tablet'),
+                        job = orderloc.job,
+                        action = function()
+                            toggleMenu(true)
+                        end
                     }
                 }
             })
@@ -835,7 +860,7 @@ CreateThread(function()
 end)
 
 CreateThread(function()
-    for _, station in ipairs(Config.Ordering) do
+    for id, station in ipairs(Config.Ordering) do
         local targetOptions = {}
         if Config.Target == 'ox' then
             exports.ox_target:addBoxZone({
@@ -852,8 +877,8 @@ CreateThread(function()
                 },
             })
         elseif Config.Target == 'qb' then
-            exports['qb-target']:AddBoxZone('ordering_station', station.coords, station.size.x, station.size.y, {
-                name = 'ordering_station',
+            exports['qb-target']:AddBoxZone('ordering_station'..id, station.coords, station.size.x, station.size.y, {
+                name = 'ordering_station'..id,
                 heading = station.rotation,
                 debugPoly = false,
                 minZ = station.coords.z - (station.size.z / 2),
@@ -861,10 +886,12 @@ CreateThread(function()
             }, {
                 options = {
                     {
-                        name = 'ordera',
+                        name = 'ordera'..id,
                         icon = 'fas fa-clipboard-list',
                         label = locale('ordering_tablet'),
-                        action = toggleMenu,
+                        action = function()
+                            toggleMenu(false)
+                        end
                     }
                 }
             })
@@ -872,17 +899,38 @@ CreateThread(function()
     end
 end)
 
-NapraviMenije()
+CreateThread(function()
+    for k,v in pairs(Config.Trays) do
+        exports['qb-target']:AddCircleZone("tray_"..k, v, 0.3, {
+            name = "tray_"..k,
+            debugPoly = false,
+            useZ = true,
+        },{
+            options = {
+                {
+                    icon = "fas fa-utensils",
+                    label = "Dienblad gebruiken",
+                    action = function()
+                        TriggerServerEvent('tj_burgershot:openTray', k)
+                    end,
+                }
+            },
+            distance = 2.0
+        })
+    end
+end)
+
+CreateMenus()
 
 -- wardrobe
 
 CreateThread(function()
-    RequestModel(GetHashKey(Config.wardrobePed))
-    while not HasModelLoaded(GetHashKey(Config.wardrobePed)) do
+    RequestModel(GetHashKey(Config.WardrobePed))
+    while not HasModelLoaded(GetHashKey(Config.WardrobePed)) do
         Wait(100)
     end
 
-    wardrobePed = CreatePed(4, GetHashKey(Config.wardrobePed), Config.wardrobePedLoc.x, Config.wardrobePedLoc.y, Config.wardrobePedLoc.z, Config.wardrobePedLoc.w, false, true)
+    wardrobePed = CreatePed(4, GetHashKey(Config.WardrobePed), Config.WardrobePedLoc.x, Config.WardrobePedLoc.y, Config.WardrobePedLoc.z, Config.WardrobePedLoc.w, false, true)
     FreezeEntityPosition(wardrobePed, true)
     SetEntityInvincible(wardrobePed, true)
     SetBlockingOfNonTemporaryEvents(wardrobePed, true)
@@ -923,7 +971,7 @@ end)
 
 function OpenAppearanceMenu()
     if Config.Appearance == 'qb' then
-        TriggerEvent('qb-clothing:client:openMenu')
+        TriggerEvent('qb-clothing:client:openOutfitMenu')
     elseif Config.Appearance == 'esx' then
         TriggerEvent('esx_skin:openMenu')
     elseif Config.Appearance == 'illenium' then

@@ -16,10 +16,10 @@ local function ConvertToQBItems(items)
     return qbItems
 end
 
-Citizen.CreateThread(function()
-    for i = 1, #Config.Resotrani, 1 do
-        for j = 1, #Config.Resotrani[i].stashovi, 1 do
-            local v = Config.Resotrani[i].stashovi[j]
+CreateThread(function()
+    for i = 1, #Config.Restaurants, 1 do
+        for j = 1, #Config.Restaurants[i].stashovi, 1 do
+            local v = Config.Restaurants[i].stashovi[j]
             if Config.Inventory == 'ox' then
 
                 exports.ox_inventory:RegisterStash(v.name, v.label, v.slots, v.weight)
@@ -61,7 +61,7 @@ local function getPlayer(source)
     return nil
 end
 
-lib.callback.register('tj_restaurants:giveItem', function(source, data)
+lib.callback.register('tj_burgershot:giveItem', function(source, data)
     local xPlayer = getPlayer(source)
     if not xPlayer then return end
 
@@ -88,7 +88,7 @@ lib.callback.register('tj_restaurants:giveItem', function(source, data)
     end
 end)
 
-lib.callback.register('tj_restaurants:checkItems', function(source, itemData)
+lib.callback.register('tj_burgershot:checkItems', function(source, itemData)
     local xPlayer = getPlayer(source)
 
     if not xPlayer then return false end  
@@ -127,8 +127,8 @@ local function generateOrderId()
     return lastOrderId
 end
 
-RegisterServerEvent('tj_restaurants:createOrder')
-AddEventHandler('tj_restaurants:createOrder', function(items, paymentMethod)
+RegisterServerEvent('tj_burgershot:createOrder')
+AddEventHandler('tj_burgershot:createOrder', function(items, paymentMethod, targetId)
     if not items or #items == 0 then
         return
     end
@@ -139,39 +139,42 @@ AddEventHandler('tj_restaurants:createOrder', function(items, paymentMethod)
         totalPrice = totalPrice + item.price
     end
 
-    local xPlayer = getPlayer(source)
+    local employeePlayer = getPlayer(source)
+    local targetPlayer = getPlayer(targetId)
 
     local success = false
 
     if paymentMethod == 'cash' then
         if Config.Framework == 'esx' then
-            if xPlayer.getMoney() >= totalPrice then
-                xPlayer.removeInventoryItem('money', totalPrice)
+            if targetPlayer.getMoney() >= totalPrice then
+                targetPlayer.removeInventoryItem('money', totalPrice)
                 success = true
             end
         elseif Config.Framework == 'qb' and Config.Inventory == 'ox' then
-            local cashBalance = exports.ox_inventory:Search(source, 'count', 'money') 
+            local cashBalance = exports.ox_inventory:Search(targetId, 'count', 'money') 
             if cashBalance >= totalPrice then
-                exports.ox_inventory:RemoveItem(source, 'money', totalPrice) 
+                exports.ox_inventory:RemoveItem(targetId, 'money', totalPrice) 
                 success = true
             else
                 return
             end
         elseif Config.Framework == 'qb' and Config.Inventory ~= 'ox' then
-            if xPlayer.PlayerData.money.cash >= totalPrice then
-                xPlayer.Functions.RemoveMoney('cash', totalPrice) 
+            if targetPlayer.PlayerData.money.cash >= totalPrice then
+                targetPlayer.Functions.RemoveMoney('cash', totalPrice) 
+                employeePlayer.Functions.AddMoney('cash', totalPrice)
                 success = true
             end
         end
     elseif paymentMethod == 'card' then
         if Config.Framework == 'esx' then
-            if xPlayer.getAccount('bank').money >= totalPrice then
-                xPlayer.removeAccountMoney('bank', totalPrice)
+            if targetPlayer.getAccount('bank').money >= totalPrice then
+                targetPlayer.removeAccountMoney('bank', totalPrice)
                 success = true
             end
         elseif Config.Framework == 'qb' then
-            if xPlayer.PlayerData.money.bank >= totalPrice then
-                xPlayer.Functions.RemoveMoney('bank', totalPrice) 
+            if targetPlayer.PlayerData.money.bank >= totalPrice then
+                targetPlayer.Functions.RemoveMoney('bank', totalPrice) 
+                employeePlayer.Functions.AddMoney('bank', totalPrice)
                 success = true
             end
         end
@@ -194,40 +197,40 @@ AddEventHandler('tj_restaurants:createOrder', function(items, paymentMethod)
         end
 
         if Config.Inventory == 'ox' then
-            exports.ox_inventory:AddItem(source, "receipt", 1, {
+            exports.ox_inventory:AddItem(targetId, "receipt", 1, {
                 description = "Order number: #" .. orderId .. " \nItems: " .. formattedItems .. " Price: $" .. orders[orderId].totalPrice 
             })
         elseif Config.Inventory == 'qb' then
-            xPlayer.Functions.AddItem("receipt", 1, false, { 
+            targetPlayer.Functions.AddItem("receipt", 1, false, { 
                 description = "Order number: #" .. orderId .. " \nItems: " .. formattedItems .. " Price: $" .. orders[orderId].totalPrice 
             })
         elseif Config.Inventory == 'qs' then
-            exports['qs-inventory']:AddItem(source, "receipt", 1, nil, { 
+            exports['qs-inventory']:AddItem(targetId, "receipt", 1, nil, { 
                 "Order number: #" .. orderId .. " \nItems: " .. formattedItems .. " Price: $" .. orders[orderId].totalPrice 
             })
         end
-        TriggerClientEvent('tj_restaurants:orderCreated', source, orderId)
-        SendDiscordLog("TJ Burgershot", "New order created. \nItems: " .. formattedItems .. "\n Player name: " .. GetPlayerName(source) .. "\n Total price: " .. totalPrice)
+        TriggerClientEvent('tj_burgershot:orderCreated', targetId, orderId)
+        SendDiscordLog("TJ Burgershot", "New order created. \nItems: " .. formattedItems .. "\n Player name: " .. GetPlayerName(targetId) .. "\n Total price: " .. totalPrice)
     else
     end
 end)
 
-RegisterServerEvent('tj_restaurants:getOrders')
-AddEventHandler('tj_restaurants:getOrders', function()
+RegisterServerEvent('tj_burgershot:getOrders')
+AddEventHandler('tj_burgershot:getOrders', function()
     local activeOrders = {}
     for id, order in pairs(orders) do
         if order.status == 'pending' then
             table.insert(activeOrders, order)
         end
     end
-    TriggerClientEvent('tj_restaurants:receiveOrders', source, activeOrders)
+    TriggerClientEvent('tj_burgershot:receiveOrders', source, activeOrders)
 end)
 
-RegisterServerEvent('tj_restaurants:acceptOrder')
-AddEventHandler('tj_restaurants:acceptOrder', function(orderId)
+RegisterServerEvent('tj_burgershot:acceptOrder')
+AddEventHandler('tj_burgershot:acceptOrder', function(orderId)
     if orders[orderId] then
         orders[orderId].status = 'accepted'
-        TriggerClientEvent('tj_restaurants:orderAccepted', source, orderId)
+        TriggerClientEvent('tj_burgershot:orderAccepted', source, orderId)
         SendDiscordLog("TJ Burgershot", "Order accepted. \nOrder ID: " .. orderId .. "\nWorker name: " .. GetPlayerName(source))
     end
 end)
@@ -399,4 +402,13 @@ RegisterNetEvent('burgershot_delivery:completeDelivery', function(deliveryPlayer
 
     TriggerClientEvent('burgershot_delivery:deliveryCompleted', deliveryPlayerSrc, moneyReward)
     activeDeliveries[deliveryPlayerSrc] = nil 
+end)
+
+RegisterNetEvent('tj_burgershot:openTray', function(id)
+    local src = source
+
+    exports['qb-inventory']:OpenInventory(src, 'burgershot_tray_'..id, {
+        maxweight = 10000,
+        slots = 10,
+    })
 end)

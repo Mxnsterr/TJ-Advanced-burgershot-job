@@ -1,23 +1,23 @@
 Config = {
     Locations = { -- Locations for shops
         {
-            label = 'Butcher',
+            label = 'Vlees',
             name = 'butcher_shop',
             Items = {
-                { label = 'Burger patty', name = 'rawburgerpatty', price = 1 },
-                { label = 'Vegan burger patty', name = 'veganburgerpatty', price = 2},
-                { label = 'Vegan burger patty', name = 'nuggets', price = 1},
+                { label = 'Hamburger', name = 'rawburgerpatty', price = 0 },
+                { label = 'Veggie burger', name = 'veganburgerpatty', price = 0 },
+                { label = 'Nuggets', name = 'nuggets', price = 0 },
             },
             target = {
-                coords = vector3(-1199.84, -904.07, 12.97),
-                width = 1.0,
-                lenght = 2.0,
-                heading = 305,
-                minZ = 10.56,
-                maxZ = 13.56,
+                coords = vector3(-1203.97, -896.53, 13.89),
+                width = 1.5,
+                length = 1.2,
+                heading = 34,
+                minZ = 12.89,
+                maxZ = 15.49,
                 icon = 'fa-solid fa-box',
-                label = 'Open freezer',
-                job = 'vagos',
+                label = 'Open frigo (vlees)',
+                job = 'burgershot',
                 action = function()
                     if Config.Inventory == 'ox' then
                         exports.ox_inventory:openInventory('shop', { type = 'butcher_shop'})
@@ -30,178 +30,152 @@ Config = {
             },
         },
         {
-            label = 'Veggies',
+            label = 'Groenten',
             name = 'veg_shop',
             Items = {
-                { label = 'Potato', name = 'potato', price = 0.2 },
-                { label = 'Onion', name = 'onion', price = 0.1 },
-                { label = 'Toamto', name = 'tomato', price = 0.3 },
-                { label = 'Burger bun', name = 'burgerbun', price = 0.8 },
-                { label = 'Cheddar', name = 'cheddar', price = 1 },
-                { label = 'Lettuce', name = 'lettuce', price = 0.4 },
+                { label = 'Aardappel', name = 'potato', price = 0 },
+                { label = 'Ui', name = 'onion', price = 0 },
+                { label = 'Tomaat', name = 'tomato', price = 0 },
+                { label = 'Broodje', name = 'burgerbun', price = 0 },
+                { label = 'Cheddar', name = 'cheddar', price = 0 },
+                { label = 'Sla', name = 'lettuce', price = 0 },
             },
             target = {
-                coords = vector3(-1201.41, -901.64, 13.97),
-                width = 1.0,
-                lenght = 4.2,
-                heading = 305,
-                minZ = 11.97,
-                maxZ = 14.97,
+                coords = vector3(-1203.05, -897.86, 13.89),
+                width = 1.5,
+                length = 1.2,
+                heading = 34,
+                minZ = 12.89,
+                maxZ = 15.49,
                 icon = 'fa-solid fa-box',
-                label = 'Open fridge',
-                job = 'vagos',
+                label = 'Open frigo (groenten)',
+                job = 'burgershot',
                 action = function()
                     if Config.Inventory == 'ox' then
                         exports.ox_inventory:openInventory('shop', { type = 'veg_shop'})
                     elseif Config.Inventory == 'qb' then
                         TriggerServerEvent('tj_burgershot:openShop', 'veg_shop')
                     elseif Config.Inventory == 'qs' then
-                        TriggerServerEvent('tj_burgershot:openShop', 'butcher_shop')
+                        TriggerServerEvent('tj_burgershot:openShop', 'veg_shop')
                     end
                 end
             },
         }
     },
 
-    Resotrani = {
+    Restaurants = {
         {
-            job = 'vagos', -- job required to access burgershot
+            job = 'burgershot', -- job required to access burgershot
             stashovi = { -- stashes
                 {
                     target = {
-                        coords = vector3(-1199.65, -895.84, 12.97),
-                        width = 1.0,
-                        lenght = 1.4,
-                        heading = 35,
-                        minZ = 10.97,
-                        maxZ = 13.97,
+                        coords = vector3(-1194.38, -896.78, 13.89),
+                        width = 1.6,
+                        length = 1.0,
+                        heading = 74,
+                        minZ = 12.74,
+                        maxZ = 14.54,
                         icon = 'fa-solid fa-box',
-                        label = 'Cooked food',
+                        label = 'Gebakken eten',
                         action = function()
                             if Config.Inventory == 'ox' then
                                 exports.ox_inventory:openInventory('stash', { id = 'CookedFood'})
                             elseif Config.Inventory == 'qb' then
-                                local namee = "burgershootCooked"
                                 TriggerServerEvent('tj_burgershot:openStash', 'CookedFood')
                             elseif Config.Inventory == 'qs' then
                                 TriggerServerEvent('tj_burgershot:openStash', 'CookedFood')
                             end
                         end
                     },
-                    label = 'Cooked food',
+                    label = 'Gebakken eten',
                     name = 'CookedFood',
                     weight = 50000,
                     slots = 50,
                 },
                 {
                     target = {
-                        coords = vector3(-1195.34, -897.48, 13.97),
-                        width = 1.2,
-                        lenght = 3.4,
-                        heading = 305,
-                        minZ = 11.85,
-                        maxZ = 14.05,
+                        coords = vector3(-1195.92, -896.37, 13.89),
+                        width = 1.6,
+                        length = 1.0,
+                        heading = 75,
+                        minZ = 12.89,
+                        maxZ = 14.69,
                         icon = 'fa-solid fa-box',
-                        label = 'Ready food',
+                        label = 'Gemaakt eten',
                         action = function()
                             if Config.Inventory == 'ox' then
                                 exports.ox_inventory:openInventory('stash', { id = 'ReadyFood'})
                             elseif Config.Inventory == 'qb' then
                                 TriggerServerEvent('tj_burgershot:openStash', 'ReadyFood')
                             elseif Config.Inventory == 'qs' then
-                                TriggerServerEvent('tj_burgershot:openStash', 'CookedFood')
+                                TriggerServerEvent('tj_burgershot:openStash', 'ReadyFood')
                             end
                         end
                     },
-                    label = 'Ready food',
+                    label = 'Gemaakt eten',
                     name = 'ReadyFood',
                     weight = 50000,
                     slots = 50,
                 },
-                -- {
-                --     target = {
-                --         coords = vector3(-1195.34, -897.48, 13.97),
-                --         width = 1.2,
-                --         lenght = 3.4,
-                --         heading = 305,
-                --         minZ = 11.85,
-                --         maxZ = 14.05,
-                --         icon = 'fa-solid fa-box',
-                --         label = 'Counter',
-                --         action = function()
-                --             if Config.Inventory == 'ox' then
-                --                 exports.ox_inventory:openInventory('stash', { id = 'counter'})
-                --             elseif Config.Inventory == 'qb' then
-                --                 TriggerServerEvent('tj_burgershot:openStash', 'counter')
-                --             elseif Config.Inventory == 'qs' then
-                --                 TriggerServerEvent('tj_burgershot:openStash', 'counter')
-                --             end
-                --         end
-                --     },
-                --     label = 'Ready food',
-                --     name = 'counter',
-                --     weight = 50000,
-                --     slots = 10,
-                -- },
             },
             menu = { -- menu options
                 {
                     id = 'drinks',
-                    label = 'Drinks menu',
+                    label = 'Drank menu',
                     menuName = 'drinksMenu',
                     target = {
-                        coords = vector3(-1197.12, -894.28, 13.97),
-                        width = 1.0,
-                        lenght = 2.2,
-                        heading = 305,
-                        minZ = 11.97,
-                        maxZ = 14.97,
+                        coords = vector3(-1190.84, -898.97, 13.89),
+                        width = 2.6,
+                        length = 1.1,
+                        heading = 304,
+                        minZ = 12.89,
+                        maxZ = 15.09,
                         icon = 'fa-solid fa-box',
-                        label = 'Make drink',
+                        label = 'Maak drank',
                         action = function()
-                            NapraviMenije()
+                            CreateMenus()
                             lib.showContext('drinksMenu')
                         end
                     },
                     Items = { -- items in menu
                         {
-                            label = 'Coke',
+                            label = 'Cola',
                             item = 'bscoke',
-                            price = 5,
+                            price = 80,
                             image = 'https://items.bit-scripts.com/images/drinks/burger-softdrink2.png',
-                            description = 'Best drink in the town',
+                            description = 'Lekkere verfrissing',
                         },
                         {
-                            label = 'Coffee',
+                            label = 'Koffie',
                             item = 'bscoffee',
-                            price = 5,
+                            price = 80,
                             image = 'https://items.bit-scripts.com/images/food/burger-coffee.png',
-                            description = 'Best coffee in the town',
+                            description = 'Goed om de dag te starten',
                         },
                         {
                             label = 'Milkshake',
                             item = 'milkshake',
-                            price = 5,
+                            price = 80,
                             image = 'https://items.bit-scripts.com/images/food/burger-milkshake.png',
-                            description = 'Best milkshake in the town',
+                            description = 'Ijskoude verfrissing',
                         }
                     }
                 },
                 {
                     id = 'food',
-                    label = 'Make food',
+                    label = 'Maak eten',
                     menuName = 'making_food',
                     target = {
-                        coords = vector3(-1196.66, -899.33, 12.97),
-                        width = 1.0,
-                        lenght = 3.2,
-                        heading = 35,
-                        minZ = 10.97,
-                        maxZ = 13.97,
+                        coords = vector3(-1201.26, -895.08, 13.89),
+                        width = 2.5,
+                        length = 1.65,
+                        heading = 34,
+                        minZ = 12.69,
+                        maxZ = 14.29,
                         icon = 'fa-solid fa-box',
-                        label = 'Make food',
+                        label = 'Maak eten',
                         action = function()
-                            NapraviMenije()
+                            CreateMenus()
                             lib.showContext('making_food')
                         end
                     },
@@ -209,32 +183,32 @@ Config = {
                         {
                             label = 'Bleeder',
                             item = 'bleeder',
-                            price = 15,
+                            price = 95,
                             image = 'https://items.bit-scripts.com/images/food/burger-bleeder.png',
-                            description = 'Best burger around the town with fresh ingridients',
+                            description = 'Onze meest sappige burger',
                             recipe = { -- recipe for making items
                                 {
-                                    label = 'Burger bun',
+                                    label = 'Broodje',
                                     name = 'burgerbun',
                                     amount = 1,
                                 },
                                 {
-                                    label = 'Burger patty',
+                                    label = 'Hamburger',
                                     name = 'cookedburgerpatty',
                                     amount = 1,
                                 },
                                 {
-                                    label = 'Sliced lettuce',
+                                    label = 'Gesneden sla',
                                     name = 'cutlettuce',
                                     amount = 2,
                                 },
                                 {
-                                    label = 'Cheddar cheese',
+                                    label = 'Cheddar kaas',
                                     name = 'cheddar',
                                     amount = 2,
                                 },
                                 {
-                                    label = 'Sliced tomato',
+                                    label = 'Gesneden tomaat',
                                     name = 'cuttomato',
                                     amount = 2,
                                 }
@@ -243,61 +217,61 @@ Config = {
                         {
                             label = 'Heart stopper',
                             item = 'heartstopper',
-                            price = 15,
+                            price = 150,
                             image = 'https://items.bit-scripts.com/images/food/burger-heartstopper.png',
-                            description = 'Best burger around the town with fresh ingridients',
+                            description = 'Voor als je je lever beu bent',
                             recipe = {
                                 {
-                                    label = 'Burger bun',
+                                    label = 'Broodje',
                                     name = 'burgerbun',
                                     amount = 1,
                                 },
                                 {
-                                    label = 'Burger patty',
+                                    label = 'Hamburger',
                                     name = 'cookedburgerpatty',
                                     amount = 4,
                                 },
                                 {
-                                    label = 'Sliced lettuce',
+                                    label = 'Gesneden sla',
                                     name = 'cutlettuce',
                                     amount = 3,
                                 },
                                 {
-                                    label = 'Cheddar cheese',
+                                    label = 'Cheddar kaas',
                                     name = 'cheddar',
                                     amount = 5,
                                 },
                                 {
-                                    label = 'Sliced tomato',
+                                    label = 'Gesneden tomaat',
                                     name = 'cuttomato',
                                     amount = 3,
                                 },
                             }
                         },
                         {
-                            label = 'Vegan burger',
+                            label = 'Veggie burger',
                             item = 'meatfree',
-                            price = 7,
+                            price = 100,
                             image = 'https://items.bit-scripts.com/images/food/dbl_hornburger.png',
-                            description = 'Best burger around the town with fresh ingridients',
+                            description = 'Diervriendelijke burger',
                             recipe = {
                                 {
-                                    label = 'Burger bun',
+                                    label = 'Broodje',
                                     name = 'burgerbun',
                                     amount = 1,
                                 },
                                 {
-                                    label = 'Burger patty',
+                                    label = 'Hamburger',
                                     name = 'cookedveganburgerpatty',
                                     amount = 2,
                                 },
                                 {
-                                    label = 'Sliced lettuce',
+                                    label = 'Gesneden sla',
                                     name = 'cutlettuce',
                                     amount = 2,
                                 },
                                 {
-                                    label = 'Sliced tomato',
+                                    label = 'Gesneden tomaat',
                                     name = 'cuttomato',
                                     amount = 1,
                                 },
@@ -306,22 +280,22 @@ Config = {
                         {
                             label = 'Torpedo',
                             item = 'torpedo',
-                            price = 15,
+                            price = 95,
                             image = 'https://items.bit-scripts.com/images/food/burger-torpedo.png',
-                            description = 'Best burger around the town with fresh ingridients',
+                            description = 'Een lange burger voor een lange dag',
                             recipe = {
                                 {
-                                    label = 'Burger bun',
+                                    label = 'Broodje',
                                     name = 'burgerbun',
                                     amount = 1,
                                 },
                                 {
-                                    label = 'Burger patty',
+                                    label = 'Hamburger',
                                     name = 'cookedburgerpatty',
                                     amount = 1,
                                 },
                                 {
-                                    label = 'Sliced tomato',
+                                    label = 'Gesneden tomaat',
                                     name = 'cuttomato',
                                     amount = 2,
                                 },
@@ -335,22 +309,22 @@ Config = {
                         {
                             label = 'Moneyshot burger',
                             item = 'moneyshot',
-                            price = 15,
+                            price = 200,
                             image = 'https://items.bit-scripts.com/images/food/burger-moneyshot.png',
-                            description = 'Best burger around the town with fresh ingridients',
+                            description = 'Voor de rijken onder ons',
                             recipe = {
                                 {
-                                    label = 'Burger bun',
+                                    label = 'Broodje',
                                     name = 'burgerbun',
                                     amount = 1,
                                 },
                                 {
-                                    label = 'Burger patty',
+                                    label = 'Hamburger',
                                     name = 'cookedburgerpatty',
                                     amount = 2,
                                 },
                                 {
-                                    label = 'Sliced tomato',
+                                    label = 'Gesneden tomaat',
                                     name = 'cuttomato',
                                     amount = 2,
                                 },
@@ -360,12 +334,12 @@ Config = {
                                     amount = 2,
                                 },
                                 {
-                                    label = 'Sliced lettuce',
+                                    label = 'Gesneden sla',
                                     name = 'cutlettuce',
                                     amount = 2,
                                 },
                                 {
-                                    label = 'Cheddar cheese',
+                                    label = 'Cheddar kaas',
                                     name = 'cheddar',
                                     amount = 2,
                                 },
@@ -375,25 +349,25 @@ Config = {
                 },
                 {
                     id = 'cutting',
-                    label = 'Cutting board',
+                    label = 'Snijplank',
                     menuName = 'cuttingBoard',
                     target = {
-                        coords = vector3(-1197.42, -898.25, 12.97),
-                        width = 1.0,
-                        lenght = 3.2,
-                        heading = 35,
-                        minZ = 10.97,
-                        maxZ = 13.97,
+                        coords = vector3(-1194.08, -900.7, 13.89),
+                        width = 1.75,
+                        length = 1.2,
+                        heading = 75,
+                        minZ = 12.89,
+                        maxZ = 14.29,
                         icon = 'fa-solid fa-box',
-                        label = 'Cutting board',
+                        label = 'Snijplank',
                         action = function()
-                            NapraviMenije()
+                            CreateMenus()
                             lib.showContext('cuttingBoard')
                         end
                     },
                     Items = {
                         {
-                            label = 'Slice potato',
+                            label = 'Snij aardappel',
                             item = 'cutpotato',
                             recipe = {
                                 {
@@ -404,7 +378,7 @@ Config = {
                             }
                         },
                         {
-                            label = 'Slice onion',
+                            label = 'Snij ui',
                             item = 'cutonion',
                             recipe = {
                                 {
@@ -415,7 +389,7 @@ Config = {
                             }
                         },
                         {
-                            label = 'Slice tomato',
+                            label = 'Snij tomaat',
                             item = 'cuttomato',
                             recipe = {
                                 {
@@ -426,7 +400,7 @@ Config = {
                             }
                         },
                         {
-                            label = 'Slice lettuce',
+                            label = 'Snij sla',
                             item = 'cutlettuce',
                             recipe = {
                                 {
@@ -440,40 +414,40 @@ Config = {
                 },
                 {
                     id = 'cooking',
-                    label = 'BBQ',
+                    label = 'Grill',
                     menuName = 'bbq',
                     target = {
-                        coords = vector3(-1198.31, -894.97, 12.97),
-                        width = 1.2,
-                        lenght = 2.0,
-                        heading = 35,
-                        minZ = 10.97,
-                        maxZ = 13.97,
+                        coords = vector3(-1195.36, -897.3, 13.89),
+                        width = 1.5,
+                        length = 0.5,
+                        heading = 75,
+                        minZ = 12.89,
+                        maxZ = 14.09,
                         icon = 'fa-solid fa-box',
-                        label = 'BBQ',
+                        label = 'Grill',
                         action = function()
-                            NapraviMenije()
+                            CreateMenus()
                             lib.showContext('bbq')
                         end
                     },
                     Items = {
                         {
-                            label = 'Burger patty',
+                            label = 'Hamburger',
                             item = 'cookedburgerpatty',
                             recipe = {
                                 {
-                                    label = 'Raw burger patty',
+                                    label = 'Rauwe hamburger',
                                     name = 'rawburgerpatty',
                                     amount = 1,
                                 },
                             }
                         },
                         {
-                            label = 'Vegan Burger patty',
+                            label = 'Veggie burger',
                             item = 'cookedveganburgerpatty',
                             recipe = {
                                 {
-                                    label = 'Raw vegan patty',
+                                    label = 'Rauwe veggie burger',
                                     name = 'veganburgerpatty',
                                     amount = 1,
                                 },
@@ -483,32 +457,32 @@ Config = {
                 },
                 {
                     id = 'deepfryer',
-                    label = 'Deep fryer',
+                    label = 'Friteuse',
                     menuName = 'deepFryer',
                     target = {
-                        coords = vector3(-1200.97, -896.72, 12.97),
-                        width = 1.0,
-                        lenght = 2.0,
-                        heading = 35,
-                        minZ = 10.97,
-                        maxZ = 13.97,
+                        coords = vector3(-1196.12, -900.11, 13.89),
+                        width = 2.5,
+                        length = 1.0,
+                        heading = 75,
+                        minZ = 12.89,
+                        maxZ = 14.29,
                         icon = 'fa-solid fa-box',
-                        label = 'Deep fryer',
+                        label = 'Friteuse',
                         action = function()
-                            NapraviMenije()
+                            CreateMenus()
                             lib.showContext('deepFryer')
                         end
                     },
                     Items = {
                         {
-                            label = 'Fries',
+                            label = 'Frieten',
                             item = 'fries',
-                            price = 15,
+                            price = 80,
                             image = 'https://items.bit-scripts.com/images/food/burger-fries.png',
-                            description = 'Fresh fries from organic potato',
+                            description = 'Echte verse frieten',
                             recipe = {
                                 {
-                                    label = 'Cutted potato',
+                                    label = 'Gesneden aardappel',
                                     name = 'cutpotato',
                                     amount = 1,
                                 },
@@ -517,12 +491,12 @@ Config = {
                         {
                             label = 'Chicken nuggets',
                             item = 'cookednuggets',
-                            price = 15,
+                            price = 85,
                             image = 'https://items.bit-scripts.com/images/food/burger-shotnuggets.png',
-                            description = 'Tasty chicken nuggets',
+                            description = 'Lekkere kip in een jasje',
                             recipe = {
                                 {
-                                    label = 'Raw chicken nuggets',
+                                    label = 'Rauwe chicken nuggets',
                                     name = 'nuggets',
                                     amount = 1,
                                 },
@@ -535,17 +509,35 @@ Config = {
     }
 }
 
-Config.Framework = 'esx' -- 'esx' or 'qb'
+Config.Framework = 'qb' -- 'esx' or 'qb'
 
-Config.Inventory = 'ox' -- 'ox', 'qb' or 'qs' (qs is not teste so if you find and issue, contact us on discord: https://discord.gg/tbSF4N7eCb)
+Config.Inventory = 'qb' -- 'ox', 'qb' or 'qs' (qs is not teste so if you find and issue, contact us on discord: https://discord.gg/tbSF4N7eCb)
 
-Config.Target = 'ox' -- 'qb' or 'ox'
+Config.Target = 'qb' -- 'qb' or 'ox'
 
-Config.Appearance = 'illenium' -- 'illenium', 'esx', 'qb', 'fivem'
+Config.Appearance = 'qb' -- 'illenium', 'esx', 'qb', 'fivem'
 
 Config.OrdersLoc = { -- locations for target for orders menu
     {
-        coords = vector3(-1194.91, -893.2, 13.97),
+        coords = vector3(-1197.45, -892.51, 14.1),
+        size = vec3(1.0, 1.0, 1.0),
+        rotation = 345,
+        job = "burgershot"
+    },
+    {
+        coords = vector3(-1195.45, -893.13, 14.1),
+        size = vec3(1.0, 1.0, 1.0),
+        rotation = 345,
+        job = "burgershot"
+    },
+    {
+        coords = vector3(-1193.39, -893.65, 14.1),
+        size = vec3(1.0, 1.0, 1.0),
+        rotation = 345,
+        job = "burgershot"
+    },
+    {
+        coords = vector3(-1191.41, -894.18, 14.1),
         size = vec3(1.0, 1.0, 1.0),
         rotation = 345,
         job = "burgershot"
@@ -554,41 +546,55 @@ Config.OrdersLoc = { -- locations for target for orders menu
 
 Config.Ordering = { -- target location for ordering menu
     {
-        coords = vector3(-1193.67, -894.62, 13.97),
+        coords = vector3(-1182.32, -891.52, 13.89),
+        size = vec3(1.0, 2.0, 1.0),
+        rotation = 300.0,
+    },
+    {
+        coords = vector3(-1185.09, -893.48, 13.89),
+        size = vec3(1.0, 2.0, 1.0),
+        rotation = 300.0,
+    },
+    {
+        coords = vector3(-1189.41, -887.19, 13.89),
+        size = vec3(1.0, 2.0, 1.0),
+        rotation = 300.0,
+    },
+    {
+        coords = vector3(-1186.49, -885.28, 13.89),
         size = vec3(1.0, 2.0, 1.0),
         rotation = 300.0,
     },
 }
 
-Config.Locations2 = { -- duty locations
-    Duty = {
-        coords = vec3(-1178.57, -897.04, 12.97),
+Config.Trays = {
+    vector3(-1192.83, -893.83, 13.98),
+    vector3(-1190.87, -894.34, 13.98),
+    vector3(-1194.8, -893.28, 13.98),
+    vector3(-1196.84, -892.72, 13.98)
+}
+
+Config.Locations2 = {
+    Duty = { -- duty location
+        coords = vector3(-1198.53, -904.79, 14.4),
         size = {1.0, 3.0},
         heading = 305.0,
         minZ = 10.77834,
         maxZ = 13.87834,
-        job = 'vagos'
+        job = 'burgershot'
     },
-    WashingHands = { -- washing hands locations
-        coords = vec3(-1197.49, -902.69, 12.97),
+    WashingHands = { -- washing hands location
+        coords = vector3(-1199.59, -899.69, 14.3),
         size = {1.0, 1.2},
         heading = 35.0,
         minZ = 10.77834,
         maxZ = 13.37834,
-        job = 'vagos'
+        job = 'burgershot'
     },
-    CarSpawner = { -- washing hands locations
-        coords = vec3(-1169.934, -887.13, 14.03),
-        size = {1.0, 1.2},
-        heading = 120.80,
-        minZ = 13.03,
-        maxZ = 15.03,
-        job = 'vagos'
-    }
 }
 
-Config.DeliveryPedModel = "mp_m_shopkeep_01"
-Config.DeliveryPedLocation = vector4(-1165.7096, -894.6837, 13.0244, 70.5930)
+Config.DeliveryPedModel = "MP_M_WareMech_01"
+Config.DeliveryPedLocation = vector4(-1187.4, -907.23, 12.63, 96.35)
 Config.DeliveryLocations = {
     vector4(-1384.5693, -976.7947, 7.9136, 301.6556), 
     vector4(850.5987, -532.6941, 56.9253, 266.6503), 
@@ -627,13 +633,17 @@ Config.DeliveryVehSpawnCoord = vector4(-1163.8986, -891.1992, 13.1227, 123.5508)
 
 Config.DeliveryVehicle = "boxville4"
 
-Config.wardrobePed = "a_m_y_clubcust_01"
-Config.wardrobePedLoc = vector4(-1181.5082, -900.6182, 12.9742, 30.2500)
+Config.WardrobePed = "U_M_Y_BurgerDrug_01"
+Config.WardrobePedLoc = vector4(-1202.32, -898.89, 12.89, 266.34)
 
 -- Logs
 
-Config.DiscordWebhook = 'https://discord.com/api/webhooks/1338146656771772426/jR4U88Iyvxy98AjXbt3VXRDt9b9M8DxoVjMgZ0AsvKcDkTKyUqmVSbpUjiWSMvrTV8DU' -- Paste your discord webhook here
+Config.DiscordWebhook = '' -- Paste your discord webhook here
 
 Config.DiscordLogo = 'https://i.postimg.cc/y8hWKkBS/logoTJ.webp' -- Paste url for your logo
 
 Config.LogColor = 2123412 -- Here you can change color of logs (https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812)
+
+Config.ImagesBasePath = "nui://qb-inventory/html/images/" -- Base path for images (for qb-inventory)
+
+Config.AllowSelfOrder = false
